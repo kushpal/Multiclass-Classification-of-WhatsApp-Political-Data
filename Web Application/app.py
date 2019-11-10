@@ -8,33 +8,39 @@ import re
 import pickle
 import nltk
 import numpy as np
+import sklearn
 from nltk.corpus import indian
 #nltk.download('indian')
 from nltk.tokenize import word_tokenize
 import tqdm
-#nltk.download('punkt')
+nltk.download('punkt')
 from flask import Flask, render_template, request
 app = Flask(__name__)
 
+from settings import (STATIC, MIN)
+opts = {"STATIC": STATIC, "MIN": MIN}
+
+
 @app.route('/')
 def student():
-   return render_template('student.html')
+   return render_template('submit.jinja2.html', submit_active="active", **opts)
 
 @app.route('/result',methods = ['POST', 'GET'])
 def result():
    if request.method == 'POST':
       result = request.form
+      print ("In result", result)
       #name = result['name']
       #print(name)
-      text = result['Name']
-      print(result['Name'])
+      text = result['title']
+      print(result['title'])
       print(type(text))
 
 
 
 
 
-      x = [text]#['*Veeru...* ने आप जैसे खास लोगो के भेजा है कुछ खास तोफहा ||\n यहाँ देखे आपका उपहार हमारी सौगात..... \n  \n live-wishing.club/?n=Veeru...']
+      x = [text]
 
       dx = np.array(x)
           
@@ -126,13 +132,23 @@ def result():
       
       
       if(prediction[0]==0):
-         typ = 'Spam or 0ffensive or Advertisement'
+         typ = 'Spam'
       else:
-         typ = 'Normal Message'
+         typ = 'General message'
       result1['Type of Message'] = typ
-      print(result1)
+      print("Send to UI", result1)
       
-      return render_template("result.html",result = result1)
+      return render_template("list.jinja2_test.html",
+       result = result1,
+       page_type='listing',
+       list_active="active",
+       **opts)
+
+    #   return render_template("result.html",
+    #    result = result1)
+
+def run_server():
+   app.run(host='0.0.0.0')
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   run_server()
