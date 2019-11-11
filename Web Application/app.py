@@ -23,7 +23,8 @@ opts = {"STATIC": STATIC, "MIN": MIN}
 
 @app.route('/')
 def student():
-   return render_template('submit.jinja2.html', submit_active="active", **opts)
+#    return render_template('submit.jinja2.html', submit_active="active", **opts)
+   return render_template('form.html', submit_active="active", **opts)   
 
 @app.route('/result',methods = ['POST', 'GET'])
 def result():
